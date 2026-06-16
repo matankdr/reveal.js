@@ -109,19 +109,56 @@ String season = switch (month) {
 
 ## Pattern Matching with Records
 
-<!-- TODO: add record deconstruction patterns example -->
+- Destructure records directly into local variables
+- No more chained getter calls (`p.x()`, `p.y()`)
 
 ```java
-// TODO
+record Point(int x, int y) {}
+
+// Access via getters
+if (obj instanceof Point p) {
+    System.out.println(p.x() + ", " + p.y());
+}
+
+// Destructure into x and y directly
+if (obj instanceof Point(int x, int y)) {
+    System.out.println(x + ", " + y);
+}
 ```
 
 
-## Pattern Matching with Sealed Types
+## Nested Record Patterns
 
-<!-- TODO: add sealed interface + exhaustive switch example -->
+Composition: pull apart deep structures
 
 ```java
-// TODO
+record Point(int x, int y) {}
+record Line(Point start, Point end) {}
+
+if (line instanceof Line(Point(int x1, int y1),
+                         Point(int x2, int y2))) {
+    var length = Math.hypot(x2 - x1, y2 - y1);
+}
+```
+
+
+## Sealed Types: Exhaustive Switch
+
+- `sealed` restricts which classes can implement the interface
+- Compiler checks every case — no `default` needed
+- Add a new permit later → compiler forces you to handle it
+
+```java
+sealed interface Shape permits Circle, Square, Rectangle {}
+record Circle(double radius)         implements Shape {}
+record Square(double side)           implements Shape {}
+record Rectangle(double w, double h) implements Shape {}
+
+double area = switch (shape) {
+    case Circle(double r)              -> Math.PI * r * r;
+    case Square(double s)              -> s * s;
+    case Rectangle(double w, double h) -> w * h;
+};
 ```
 
 ---
