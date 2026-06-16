@@ -16,8 +16,5 @@
 
 ## Thank You
 
-Join the Slack channel `#x-engineer-java-training`
 
-Please fill out the feedback form to help us improve the next session:
 
-[https://forms.gle/L2Rvdntbtv5BzvuP7](https://forms.gle/L2Rvdntbtv5BzvuP7)

@@ -169,10 +169,10 @@ record Line(Point start, Point end) {}
 
 String describe(Object obj) {
     return switch (obj) {
-        case Point(int x, int y)       -> "point at " + x + ", " + y;
-        case Line(Point a, Point b)    -> "line from " + a + " to " + b;
-        case null                      -> "nothing";
-        default                        -> "unknown shape";
+        case Point(int x, int y)    -> "point: " + x + "," + y;
+        case Line(Point a, Point b) -> "line: " + a + " to " + b;
+        case null                   -> "nothing";
+        default                     -> "unknown shape";
     };
 }
 ```
@@ -201,11 +201,10 @@ String classify(Object obj) {
 
 ## Sealed Types: Exhaustive Switch
 
-Tie it all together — `sealed` + records + switch = exhaustive matching.
-
-- `sealed` restricts which classes can implement the interface
+- `sealed` restricts implementor classes
 - Compiler checks every case — no `default` needed
 - Add a new permit later → compiler forces you to handle it
+- `sealed` + records + switch = exhaustive matching!
 
 ```java
 sealed interface Shape permits Circle, Square, Rectangle {}
