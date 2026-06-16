@@ -142,7 +142,66 @@ if (line instanceof Line(Point(int x1, int y1),
 ```
 
 
+## Patterns in `switch`
+
+- `switch` arms can match by **type** — no `instanceof` ladder needed
+- Variable is bound and in scope in the arm
+
+```java
+String describe(Object obj) {
+    return switch (obj) {
+        case Integer i -> "int: " + i;
+        case String s  -> "string of length " + s.length();
+        case null      -> "nothing";
+        default        -> "something else";
+    };
+}
+```
+
+
+## Record Patterns in `switch`
+
+Destructure the value as you match it.
+
+```java
+record Point(int x, int y) {}
+record Line(Point start, Point end) {}
+
+String describe(Object obj) {
+    return switch (obj) {
+        case Point(int x, int y)       -> "point at " + x + ", " + y;
+        case Line(Point a, Point b)    -> "line from " + a + " to " + b;
+        case null                      -> "nothing";
+        default                        -> "unknown shape";
+    };
+}
+```
+
+
+## Guarded Patterns: `when`
+
+Refine a pattern with a boolean condition.
+
+```java
+String classify(Object obj) {
+    return switch (obj) {
+        case Integer i when i < 0  -> "negative";
+        case Integer i when i == 0 -> "zero";
+        case Integer i             -> "positive";
+        case String s when s.isBlank() -> "blank string";
+        case String s              -> "string: " + s;
+        case null, default         -> "not a number";
+    };
+}
+```
+
+- Each guard runs only after the pattern matches
+- Order matters — first matching arm wins
+
+
 ## Sealed Types: Exhaustive Switch
+
+Tie it all together — `sealed` + records + switch = exhaustive matching.
 
 - `sealed` restricts which classes can implement the interface
 - Compiler checks every case — no `default` needed
