@@ -5,7 +5,7 @@
 
 - A **thread** is an independent path of execution.
 - Your program already has one: the `main` thread.
-- A platform thread maps 1:1 to an **OS thread** — and costs ~**MBs** of stack.
+- A platform thread maps 1:1 to an **OS thread** — and costs ~**1MB** of stack.
 
 
 ## What is a Thread?

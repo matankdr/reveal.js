@@ -1,20 +1,15 @@
 # Virtual Threads
 
 
-## Async at Wix
-
-| I/O Bound | Stability | The Goal |
-|---|---|---|
-| Wix services spend most of their time waiting on Databases, APIs, and Caches. | Non-blocking operations are crucial to keep the system responsive under load. | Handling high throughput with minimal resources (CPU/RAM). |
-
----
-
 ## Virtual Threads (Java 21)
 
-- **What**: a thread *not* tied to an OS thread — scheduled by the JVM.
-- **Lightweight**: managed by the JVM, not the OS kernel.
+- **Virtual Thread**: a thread *not* tied to an OS thread 
+    - scheduled by the JVM.
+- **Lightweight**: managed by the JVM
+  - Not by the OS kernel.
 - **Mount/Unmount**: a VT "mounts" on a *carrier* OS thread only while running code.
-- **The Yield**: when it waits for I/O (DB, HTTP), the VT "unmounts", freeing the carrier to run other VTs.
+- When VT waits for I/O (DB, HTTP), it "unmounts" 
+  - Freeing the carrier to run other VTs.
 
 <div align="left" class="fragment">
 <ul><li>Write simple <em>blocking</em> code — get <em>non-blocking</em> scalability.</li></ul>
@@ -33,23 +28,6 @@ try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
     executor.submit(() -> fetchData());
 }
 ```
-
----
-
-## Platform vs Virtual Threads
-
-| | Platform Thread | Virtual Thread |
-|---|---|---|
-| Backed by | OS kernel thread (1:1) | JVM, mounts on a carrier |
-| Memory | ~1 MB stack | ~few KB, grows on demand |
-| How many | Thousands | Millions |
-| Creation | Expensive → **pool them** | Cheap → **one per task** |
-| Blocking I/O | Blocks the OS thread | Unmounts, frees the carrier |
-| Best for | CPU-bound work | I/O-bound work |
-
-<div align="left" class="fragment">
-<ul><li>Same <code>Thread</code> API, same debugger, same stack traces.</li></ul>
-</div>
 
 ---
 
@@ -79,27 +57,57 @@ try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
 ## Structured Concurrency
 
 - Treat related tasks as **one unit of work** — fan out, then join.
-- If one subtask fails, the siblings are cancelled automatically *(Preview in 21)*.
+- A subtask's lifetime is **bound to the code block** that started it.
+- *(Preview in Java 21 — run with `--enable-preview`)*
+
+<div align="left" class="fragment">
+<ul><li>Like structured programming: tasks nest like <code>{ }</code> blocks — no orphans.</li></ul>
+</div>
+
+
+## The Problem It Solves
+
+- With a raw executor, forked tasks become **orphans**:
+  - one fails → the others keep running (wasted work, leaks)
+  - cancellation and error handling are manual and easy to get wrong
+- No guarantee everything finished when the method returns.
+
+<div align="left" class="fragment">
+<ul><li>Structured concurrency makes the JVM enforce the parent/child relationship.</li></ul>
+</div>
+
+
+## Example
 
 ```java
 try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
-    var user  = scope.fork(() -> findUser(id));   // each runs
-    var order = scope.fork(() -> fetchOrder(id)); // on its own VT
+    Subtask<User>  user  = scope.fork(() -> findUser(id));   // child VT
+    Subtask<Order> order = scope.fork(() -> fetchOrder(id)); // child VT
 
-    scope.join().throwIfFailed();                 // wait for both
+    scope.join();           // wait for ALL children
+    scope.throwIfFailed();  // propagate the first error, if any
+
     return new Response(user.get(), order.get());
-}
+} // scope closes → any stragglers are cancelled
 ```
 
----
+- `fork` → start a subtask on its own virtual thread.
+- `join` → block until all subtasks finish (or one triggers shutdown).
+- `get()` → read a result, only **after** a successful join.
 
-## Pitfalls & Best Practices
 
-- **Pinning**: a VT inside `synchronized` can't unmount during I/O — prefer `ReentrantLock`.
-- **No CPU boost**: VTs help *I/O-bound* work, not number-crunching.
-- **Don't pool them**: create one per task; pooling defeats the purpose.
-- **Thread-locals**: heavy `ThreadLocal` state scales poorly with millions of threads.
+## Shutdown Policies
 
-<div align="left" class="fragment">
-<ul><li>At Wix Ninja, use the <strong>managed executor</strong> — pinning &amp; context are handled for you.</li></ul>
-</div>
+| Policy | Behavior |
+|---|---|
+| `ShutdownOnFailure` | First failure cancels the rest — *all must succeed* |
+| `ShutdownOnSuccess` | First success cancels the rest — *race for any winner* |
+
+```java
+// Race two sources, take whoever answers first
+try (var scope = new StructuredTaskScope.ShutdownOnSuccess<String>()) {
+    scope.fork(() -> callPrimary());
+    scope.fork(() -> callBackup());
+    return scope.join().result();   // fastest result wins
+}
+```
