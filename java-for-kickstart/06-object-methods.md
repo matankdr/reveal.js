@@ -103,7 +103,7 @@ class User {
 // Logic Failure in Collections:
 var usersAndStatus = new HashMap<User, String>();
 var u1  = new User("123");
-map.put(u1, "Authorized");
+usersAndStatus.put(u1, "Authorized");
 
 var u2 = new User("123");
 System.out.println(u1.equals(u2)); // true
