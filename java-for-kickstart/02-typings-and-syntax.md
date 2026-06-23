@@ -20,7 +20,7 @@ String name = "Expert";
 
 - **Storage**: Primitives (e.g., `int`) store values directly in stack memory for high performance
 - **Memory**: Objects are reference types stored in heap memory and accessed via pointers
-- **Capabilities**: Unlike primitives, object types can be `null` and provide built-in methods (e.g., `.toString()`)
+- **Capabilities**: Object types can be `null` and provide built-in methods (e.g., `.toString()`)
 
 ```java
 // Primitive: no methods, cannot be null
@@ -58,7 +58,8 @@ var isWix = true;             // boolean
 ## The Entry Point: The `main` Method
 
 - Every Java application starts with a `main` method
-- Signature: `public static void main(String[] args)`
+- Must be located in a wrapper class
+- `main` method signature is strict
 
 ```java
 public class HelloWorld {
@@ -69,7 +70,7 @@ public class HelloWorld {
 ```
 
 
-## Java 21+: Wrapper class is not required
+### Java 21+: Wrapper class is not required
 
 ```java
 void main() {
@@ -155,5 +156,7 @@ switch (month) {
 ---
 
 ## Hands-on Lab: Calculator API
+[Exercise 1](https://github.com/wix-private/wix-academy/tree/master/server-onboarding/java-exercises/java-fundamentals#exercise-1-basic-java--variables-control-flow)
 
-Task: Implement `GET /api/exercise1/calculate`
+Implement `CalculatorExercises`
+

@@ -27,8 +27,6 @@
 - Records <!-- .element: class="fragment" -->
 - Pattern matching <!-- .element: class="fragment" -->
 
-Next time: Concurrency / Async Programming <!-- .element: class="fragment" -->
-
 ---
 
 ## Short Introduction to Java

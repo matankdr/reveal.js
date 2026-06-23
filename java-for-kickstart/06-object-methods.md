@@ -65,7 +65,7 @@ class User {
 
   @Override
   public int hashCode() {
-    // Required whenever equals is overridden to avoid collection bugs
+    // Required whenever equals is overridden
     return Integer.hashCode(id);
   }
 }

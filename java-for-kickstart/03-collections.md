@@ -80,5 +80,6 @@ var map = Map.of(
 ---
 
 ## Hands-on Lab: User Discovery
+[Exercise 2](https://github.com/wix-private/wix-academy/tree/master/server-onboarding/java-exercises/java-fundamentals#exercise-2-collections--list-vs-set-vs-map)
 
-Task: Implement efficient lookup using a `HashMap`
+Java collections
