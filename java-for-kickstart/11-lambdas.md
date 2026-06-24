@@ -103,7 +103,7 @@ if (isAdmin.test(user)) {
 
 ```java
 s -> s.toUpperCase() // lambda
-String.toUpperCase   // method reference
+String::toUpperCase   // method reference
 
 x -> System.out.println(x) // lambda
 System.out::println        // method reference

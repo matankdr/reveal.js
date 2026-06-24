@@ -21,7 +21,7 @@ Optional.ofNullable(VALUE);
 Optional.empty();
 
 // Extraction
-Option[String] opt = Optional.of("hello");
+Optional[String] opt = Optional.of("hello");
 
 opt.orElse("default");
 opt.orElseThrow();
@@ -57,7 +57,7 @@ if (userOpt.isPresent()) {
 
 ```java
 // Modern null-safe chain
-return findUser("123")
+findUser("123").stream()
     .map(User::getEmail)
     .map(email -> email.endsWith(".com"))
     .forEach(System.out::println);

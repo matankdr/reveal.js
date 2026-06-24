@@ -1,5 +1,5 @@
 # Modern Java 21+
-## for FED & Mobile
+## for Kickstart
 
 ### Session 2: Functional Java & Concurrency
 
@@ -30,6 +30,6 @@ Mastering modern pipelines and scalable async
 
 ## Recap: Session 1
 
-- **Local Type Inference** — clean code with `var`; Java 21 feels closer to TypeScript <!-- .element: class="fragment" -->
-- **Records** — immutable, concise data carriers that eliminate boilerplate <!-- .element: class="fragment" -->
-- **Modern Collections** — `List.of()`, `Map.of()` for built-in immutability <!-- .element: class="fragment" -->
+- **Local Type Inference** — clean code with `var`; Java 21 feels closer to TypeScript 
+- **Records** — immutable, concise data carriers that eliminate boilerplate 
+- **Modern Collections** — `List.of()`, `Map.of()` for built-in immutability 
